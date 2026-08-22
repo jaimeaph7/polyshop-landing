@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poly Shop3D — Configuradores 3D para Muebles</title>
+<meta name="description" content="Configuradores 3D en tiempo real para fabricantes y distribuidores de muebles. Menos devoluciones, más conversión.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0A0A0A;
+    --white:#FFFFFF;
+    --gray-1:#6B6B6B;
+    --gray-2:#EDEDED;
+    --gray-3:#F7F7F7;
+    --line:#DEDEDE;
+    --green:#1F8A4C;
+    --green-dark:#14602F;
+    --green-tint:#E7F4EC;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--white);color:var(--black);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.03em;line-height:1.02;}
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 32px;}
+  @media (max-width:640px){.wrap{padding:0 20px;}}
+
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:16px 30px;border-radius:100px;font-family:'Inter',sans-serif;font-weight:600;font-size:15px;border:1.5px solid var(--black);cursor:pointer;transition:all .35s var(--ease);white-space:nowrap;}
+  .btn-solid{background:var(--black);color:var(--white);}
+  .btn-solid:hover{background:var(--green);border-color:var(--green);color:var(--white);}
+  .btn-outline{background:transparent;color:var(--black);}
+  .btn-outline:hover{background:var(--black);color:var(--white);}
+  .btn svg{width:16px;height:16px;transition:transform .35s var(--ease);}
+  .btn:hover svg{transform:translateX(3px);}
+
+  header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  nav{display:flex;align-items:center;justify-content:space-between;height:76px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;letter-spacing:-0.02em;}
+  .logo span{color:var(--green);font-weight:500;}
+  .nav-links{display:flex;gap:34px;align-items:center;}
+  .nav-links a{font-size:13.5px;font-weight:500;color:var(--black);position:relative;padding:4px 0;}
+  .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--green);transition:width .3s var(--ease);}
+  .nav-links a:hover::after{width:100%;}
+  .nav-cta .btn{padding:12px 24px;font-size:13px;}
+  .burger{display:none;background:none;border:none;cursor:pointer;}
+  @media (max-width:960px){.nav-links{display:none;}.burger{display:block;}}
+
+  /* HERO */
+  .hero{padding:170px 0 100px;border-bottom:1px solid var(--line);}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gray-1);margin-bottom:28px;}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .hero h1{font-size:clamp(2.6rem,6.4vw,5.6rem);max-width:900px;}
+  .hero-sub{font-size:clamp(1rem,1.6vw,1.2rem);color:var(--gray-1);max-width:520px;margin:32px 0 44px;line-height:1.55;}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
+
+  .hero-video{margin-top:80px;border:1px solid var(--line);border-radius:20px;aspect-ratio:16/8;background:var(--black);position:relative;overflow:hidden;}
+  .hero-video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .hero-video .video-tag{position:absolute;bottom:24px;left:24px;font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--white);background:rgba(0,0,0,.5);padding:8px 14px;border-radius:100px;}
+
+  section{padding:120px 0;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:64px;flex-wrap:wrap;}
+  .kicker{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:16px;display:block;}
+  .section-head h2{font-size:clamp(1.9rem,3.4vw,2.8rem);max-width:640px;}
+  .section-head p{color:var(--gray-1);max-width:360px;font-size:15px;line-height:1.6;}
+
+  /* CASOS DE USO — layout de dos columnas con imagen fija a la derecha */
+  .cases-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+  .cases{display:flex;flex-direction:column;border-top:1px solid var(--line);}
+  .case-row{padding:30px 0;border-bottom:1px solid var(--line);transition:background .3s var(--ease);}
+  .case-row:hover, .case-row.active{background:var(--gray-3);}
+  .case-num{font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--gray-1);font-weight:600;display:block;margin-bottom:10px;}
+  .case-title{font-size:clamp(1.3rem,2.4vw,1.9rem);font-weight:700;font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em;text-transform:uppercase;transition:color .3s var(--ease);display:block;}
+  .case-row:hover .case-title, .case-row.active .case-title{color:var(--green);}
+  .case-sub{font-size:13px;color:var(--gray-1);margin-top:10px;letter-spacing:.02em;}
+  .case-desc{font-size:15px;color:var(--gray-1);line-height:1.65;max-width:460px;margin-top:16px;}
+  .cases-image{position:sticky;top:110px;border-radius:20px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/11.4;background:var(--gray-3);}
+  .cases-image img{width:100%;height:100%;object-fit:cover;transition:opacity .4s var(--ease);}
+  .cases-image .caption{position:absolute;bottom:20px;left:20px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--white);background:rgba(0,0,0,.55);padding:8px 14px;border-radius:100px;}
+  .cases-image-wrap{position:relative;}
+  @media (max-width:900px){.cases-layout{grid-template-columns:1fr;}.cases-image{position:relative;top:0;order:-1;}}
+
+  /* BENEFICIOS */
+  .benefits{background:var(--gray-3);}
+  .benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden;}
+  .benefit-card{background:var(--white);padding:44px 36px;}
+  .benefit-icon{width:44px;height:44px;border-radius:12px;background:var(--green-tint);color:var(--green-dark);display:flex;align-items:center;justify-content:center;margin-bottom:28px;}
+  .benefit-icon svg{width:22px;height:22px;}
+  .benefit-card h3{font-size:20px;margin-bottom:14px;font-weight:600;}
+  .benefit-card p{color:var(--gray-1);font-size:14.5px;line-height:1.65;}
+  @media (max-width:800px){.benefit-grid{grid-template-columns:1fr;}}
+
+  /* DEMOS teaser */
+  .demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+  .demo-card{border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;}
+  .demo-visual{aspect-ratio:16/10;background:var(--gray-3);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .demo-visual .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px, transparent 1px),linear-gradient(90deg, var(--line) 1px, transparent 1px);background-size:32px 32px;opacity:.7;}
+  .demo-shape{width:100px;height:100px;border:2px solid var(--green);border-radius:14px;position:relative;background:var(--white);}
+  .demo-shape::before{content:'';position:absolute;inset:14px;border:1.5px solid var(--gray-1);border-radius:8px;}
+  .demo-body{padding:30px 32px;}
+  .demo-tag{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green);}
+  .demo-body h3{font-size:22px;font-weight:600;font-family:'Space Grotesk',sans-serif;margin:12px 0 12px;}
+  .demo-body p{font-size:14px;color:var(--gray-1);line-height:1.6;margin-bottom:20px;}
+  .stack-tags{display:flex;flex-wrap:wrap;gap:8px;}
+  .stack-tags span{font-size:11.5px;font-weight:600;padding:6px 12px;border:1px solid var(--line);border-radius:100px;color:var(--black);}
+  @media (max-width:800px){.demo-grid{grid-template-columns:1fr;}}
+  .see-more{display:inline-flex;align-items:center;gap:8px;margin-top:36px;font-weight:600;font-size:14.5px;border-bottom:1.5px solid var(--black);padding-bottom:3px;}
+  .see-more:hover{border-color:var(--green);color:var(--green-dark);}
+
+  /* PORTFOLIO */
+  .portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .portfolio-item{aspect-ratio:4/5;border-radius:16px;background:var(--gray-3);border:1px solid var(--line);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:20px;}
+  .portfolio-item .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px, transparent 1px),linear-gradient(90deg, var(--line) 1px, transparent 1px);background-size:26px 26px;opacity:.55;}
+  .portfolio-item span{position:relative;font-size:12.5px;font-weight:600;color:var(--gray-1);background:var(--white);padding:6px 12px;border-radius:100px;border:1px solid var(--line);}
+  @media (max-width:800px){.portfolio-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:520px){.portfolio-grid{grid-template-columns:1fr;}}
+
+  /* CTA BAND */
+  .cta-band{background:var(--black);color:var(--white);border-radius:28px;margin:0 32px;padding:90px 60px;text-align:center;}
+  .cta-band h2{font-size:clamp(1.8rem,4vw,3rem);max-width:720px;margin:0 auto 20px;color:var(--white);}
+  .cta-band p{color:#B5B5B5;font-size:15px;max-width:480px;margin:0 auto 40px;line-height:1.6;}
+  .cta-band .btn-solid{background:var(--green);color:var(--white);border-color:var(--green);}
+  .cta-band .btn-solid:hover{background:var(--white);color:var(--black);border-color:var(--white);}
+  @media (max-width:640px){.cta-band{margin:0 16px;padding:60px 28px;}}
+
+  /* CONTACT */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;}
+  .contact-info h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin-bottom:24px;max-width:480px;}
+  .contact-info p{color:var(--gray-1);font-size:15px;line-height:1.7;max-width:420px;margin-bottom:32px;}
+  .contact-detail a{font-size:16px;font-weight:600;border-bottom:1.5px solid var(--green);width:fit-content;padding-bottom:3px;color:var(--green-dark);}
+  form{display:flex;flex-direction:column;gap:22px;}
+  .field label{font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-1);margin-bottom:8px;display:block;}
+  .field input, .field textarea{width:100%;border:none;border-bottom:1.5px solid var(--line);padding:12px 0;font-family:'Inter',sans-serif;font-size:16px;background:transparent;transition:border-color .3s;}
+  .field input:focus, .field textarea:focus{outline:none;border-color:var(--green);}
+  .field textarea{resize:vertical;min-height:80px;}
+  form .btn{align-self:flex-start;margin-top:8px;}
+  @media (max-width:800px){.contact-grid{grid-template-columns:1fr;gap:56px;}}
+
+  footer{border-top:1px solid var(--line);padding:56px 0 40px;}
+  .footer-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;margin-bottom:40px;}
+  .footer-links{display:flex;gap:28px;flex-wrap:wrap;}
+  .footer-links a{font-size:13.5px;color:var(--gray-1);font-weight:500;}
+  .footer-links a:hover{color:var(--green-dark);}
+  .footer-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--gray-1);border-top:1px solid var(--line);padding-top:24px;}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease), transform .8s var(--ease);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;} .eyebrow .dot{animation:none;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a href="index.html" class="logo">Poly<span>Shop3D</span></a>
+      <div class="nav-links">
+        <a href="#casos">Casos de uso</a>
+        <a href="#servicios">Beneficios</a>
+        <a href="prototipos.html">03 — Prototipos y Demos</a>
+        <a href="#portafolio">Portafolio</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+      <div class="nav-cta">
+        <a href="#contacto" class="btn btn-solid">Iniciar proyecto
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" style="padding-top:180px;">
+    <div class="wrap">
+      <span class="eyebrow"><span class="dot"></span>Configuradores 3D para fabricantes de muebles</span>
+      <h1>Revoluciona el comercio electrónico con 3D</h1>
+      <p class="hero-sub">Fusionamos tecnología 3D para ofrecer visualización en tiempo real, con fluidez impecable y máxima tasa de conversión — hecho a la medida de fabricantes y distribuidores de muebles.</p>
+      <div class="hero-ctas">
+        <a href="#contacto" class="btn btn-solid">Agenda una llamada gratuita
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="prototipos.html" class="btn btn-outline">Ver demos</a>
+      </div>
+
+      <div class="hero-video reveal" id="heroVideo">
+        <video autoplay muted loop playsinline poster="">
+          <!-- Reemplaza esta línea con tu video: <source src="tu-video.mp4" type="video/mp4"> -->
+        </video>
+        <div class="video-tag">Configurador en acción</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASOS DE USO -->
+  <section id="casos">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">02 — Casos de uso</span>
+          <h2>Configuradores hechos para vender productos complejos</h2>
+        </div>
+        <p>Cada industria tiene sus propias reglas de personalización — el configurador se adapta a las tuyas.</p>
+      </div>
+      <div class="cases-layout reveal">
+        <div class="cases" id="casesList">
+          <div class="case-row active" data-img="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&h=640&fit=crop&auto=format" data-caption="Muebles modulares">
+            <span class="case-num">01</span>
+            <span class="case-title">Muebles modulares</span>
+            <div class="case-sub">Alta Gama &amp; Customización</div>
+            <p class="case-desc">Configuradores de mobiliario con materiales intercambiables, dimensiones ajustables y previsualización de acabados en tiempo real.</p>
+          </div>
+          <div class="case-row" data-img="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&h=640&fit=crop&auto=format" data-caption="Calzado personalizable">
+            <span class="case-num">02</span>
+            <span class="case-title">Calzado personalizable</span>
+            <div class="case-sub">Custom Footwear</div>
+            <p class="case-desc">Selección de colores, materiales y suelas con renderizado 3D instantáneo que elimina la fricción de compra.</p>
+          </div>
+          <div class="case-row" data-img="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=900&h=640&fit=crop&auto=format" data-caption="Joyería de lujo">
+            <span class="case-num">03</span>
+            <span class="case-title">Joyería de lujo</span>
+            <div class="case-sub">Fine Jewelry</div>
+            <p class="case-desc">Visualización de metales preciosos, piedras y grabados con fotorrealismo que convierte visitantes en compradores.</p>
+          </div>
+        </div>
+        <div class="cases-image-wrap">
+          <div class="cases-image">
+            <img id="casesImg" src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&h=640&fit=crop&auto=format" alt="Muebles modulares">
+            <span class="caption" id="casesCaption">Muebles modulares</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section class="benefits" id="servicios">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">03 — Beneficios</span>
+          <h2>Lo que cambia en tu negocio al vender en 3D</h2>
+        </div>
+        <p>Un configurador no es solo una novedad visual — es una herramienta que reduce fricción y aumenta ventas.</p>
+      </div>
+      <div class="benefit-grid reveal">
+        <div class="benefit-card">
+          <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg></div>
+          <h3>Menos devoluciones</h3>
+          <p>El cliente ve exactamente lo que va a recibir antes de comprar — menos sorpresas, menos productos devueltos.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6-8-11a5 5 0 0110-2 5 5 0 0110 2c0 5-4 8-8 11z"/></svg></div>
+          <h3>Mejor experiencia de compra</h3>
+          <p>Tus clientes personalizan su producto en tiempo real, sin esperar respuestas ni cotizaciones manuales.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12L4 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg></div>
+          <h3>Menos carritos abandonados</h3>
+          <p>La incertidumbre es la principal razón de abandono — visualizar el producto final la elimina casi por completo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROTOTIPOS Y DEMOS -->
+  <section id="prototipos">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">03 — Prototipos y Demos</span>
+          <h2>Lo que ya hemos construido</h2>
+        </div>
+        <p>Prototipos funcionales, no simples imágenes — pruébalos en vivo.</p>
+      </div>
+      <div class="demo-grid reveal">
+        <div class="demo-card">
+          <div class="demo-visual"><div class="grid-bg"></div><div class="demo-shape"></div></div>
+          <div class="demo-body">
+            <span class="demo-tag">Configurador de materiales</span>
+            <h3>Artesanías interactivas</h3>
+            <p>Configurador de selección de maderas nativas, texturas artesanales y acabados, con vista previa en tiempo real y diseño adaptable a cualquier pantalla.</p>
+            <div class="stack-tags"><span>Personalización en vivo</span><span>Multi-dispositivo</span></div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-visual"><div class="grid-bg"></div><div class="demo-shape"></div></div>
+          <div class="demo-body">
+            <span class="demo-tag">Diseño de experiencia</span>
+            <h3>Mockups 3D</h3>
+            <p>Interfaces pensadas para la industria del mueble: el cliente cambia una opción y el producto se actualiza al instante, sin demoras ni recargas.</p>
+            <div class="stack-tags"><span>Respuesta instantánea</span><span>Diseño intuitivo</span></div>
+          </div>
+        </div>
+      </div>
+      <a href="prototipos.html" class="see-more reveal">Ver más
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portafolio">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">Portafolio</span>
+          <h2>Animación y render 3D</h2>
+        </div>
+        <p>Trabajo previo en animación, producción comercial y render 3D.</p>
+      </div>
+      <div class="portfolio-grid reveal">
+        <div class="portfolio-item"><div class="grid-bg"></div><span>Render 01</span></div>
+        <div class="portfolio-item"><div class="grid-bg"></div><span>Animación 02</span></div>
+        <div class="portfolio-item"><div class="grid-bg"></div><span>Render 03</span></div>
+      </div>
+      <a href="portafolio.html" class="see-more reveal">Ver más
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section style="padding-top:0;">
+    <div class="cta-band reveal">
+      <h2>¿Tu catálogo de muebles merece verse en 3D?</h2>
+      <p>Agenda una llamada gratuita de 30 minutos para conocer tu negocio y tus necesidades — sin compromiso.</p>
+      <a href="#contacto" class="btn btn-solid">Agendar llamada gratuita
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contacto">
+    <div class="wrap">
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <span class="kicker">04 — Contacto</span>
+          <h2>¿Tienes un catálogo que merece visualización de alto impacto?</h2>
+          <p>Agenda una llamada gratuita de 30 minutos y exploremos cómo transformar tu producto con experiencias 3D interactivas que elevan la conversión.</p>
+          <div class="contact-detail">
+            <a href="https://calendly.com/" target="_blank" rel="noopener">Agendar llamada de 30 min →</a>
+          </div>
+        </div>
+        <form class="reveal" onsubmit="event.preventDefault(); alert('Gracias por escribir — te contactaremos pronto.');">
+          <div class="field">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" required placeholder="Tu nombre">
+          </div>
+          <div class="field">
+            <label for="correo">Correo electrónico</label>
+            <input id="correo" type="email" required placeholder="tucorreo@empresa.com">
+          </div>
+          <div class="field">
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" required placeholder="Cuéntanos sobre tu catálogo y lo que necesitas"></textarea>
+          </div>
+          <button type="submit" class="btn btn-solid">Enviar mensaje
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <a href="index.html" class="logo">Poly<span>Shop3D</span></a>
+      <div class="footer-links">
+        <a href="#casos">Casos de uso</a>
+        <a href="#servicios">Beneficios</a>
+        <a href="prototipos.html">Prototipos y Demos</a>
+        <a href="portafolio.html">Portafolio</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Poly Shop3D. Todos los derechos reservados.</span>
+      <span>Bogotá, Colombia</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:0.15});
+  reveals.forEach(el=>io.observe(el));
+
+  // Casos de uso — cambia la imagen de la derecha según la fila activa
+  const casesImg = document.getElementById('casesImg');
+  const casesCaption = document.getElementById('casesCaption');
+  const caseRows = document.querySelectorAll('.case-row');
+  caseRows.forEach(row=>{
+    row.addEventListener('mouseenter', ()=>{
+      caseRows.forEach(r=>r.classList.remove('active'));
+      row.classList.add('active');
+      casesImg.style.opacity = 0;
+      setTimeout(()=>{
+        casesImg.src = row.dataset.img;
+        casesImg.alt = row.dataset.caption;
+        casesCaption.textContent = row.dataset.caption;
+        casesImg.style.opacity = 1;
+      }, 150);
+    });
+  });
+</script>
+
+</body>
+</html>
